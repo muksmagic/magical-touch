@@ -531,6 +531,7 @@ iframe {
   border-radius: 50px;
   text-decoration: none;
   font-weight: bold;
+  z-index: 9999;
 }
 
 /* =======================
