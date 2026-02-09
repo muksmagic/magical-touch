@@ -1,207 +1,226 @@
+// =========================
+// API BASE (Live Server -> Express on :3000)
+// If you open the site via http://localhost:3000 then you can set API_BASE = ""
+// =========================
+const API_BASE = "http://localhost:3000";
+
+function scrollToBooking() {
+  document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
+}
+
+// gallery scroller
+function scrollGallery(dir) {
+  const track = document.getElementById("galleryTrack");
+  if (!track) return;
+  track.scrollBy({ left: dir * 280, behavior: "smooth" });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-
-  /* =======================
-     SCROLL TO BOOKING
-  ======================= */
-  function scrollToBooking() {
-    document.getElementById("booking").scrollIntoView({ behavior: "smooth" });
-  }
-
-  /* =======================
-     DATE – DISABLE PAST
-  ======================= */
+  // =========================
+  // BOOKING
+  // =========================
   const dateInput = document.getElementById("date");
-  if (dateInput) {
-    dateInput.min = new Date().toISOString().split("T")[0];
-  }
-
-  /* =======================
-     TIME SELECT
-  ======================= */
+  const serviceSelect = document.getElementById("service");
   const timeSelect = document.getElementById("time");
+  const errorBox = document.getElementById("bookingError");
+  const form = document.getElementById("bookingForm");
+  const successBox = document.getElementById("bookingSuccess");
 
-  function resetTimeSelect() {
-    timeSelect.innerHTML = `<option value="">Select Time</option>`;
+  if (!dateInput || !serviceSelect || !timeSelect) return;
+
+  // Server rules: today -> 30 days ahead
+  const today = new Date();
+  const min = today.toISOString().split("T")[0];
+  const maxDate = new Date(today);
+  maxDate.setDate(today.getDate() + 30);
+  const max = maxDate.toISOString().split("T")[0];
+
+  dateInput.min = min;
+  dateInput.max = max;
+
+  function showError(msg) {
+    if (!errorBox) return;
+    errorBox.textContent = msg;
+    errorBox.classList.remove("hidden");
   }
 
-  resetTimeSelect();
+  function hideError() {
+    if (!errorBox) return;
+    errorBox.classList.add("hidden");
+    errorBox.textContent = "";
+  }
 
-  /* =======================
-     FETCH AVAILABLE TIMES
-  ======================= */
-  async function updateAvailableTimes(date) {
-    resetTimeSelect();
-    if (!date) return;
+  function resetTimes(msg = "Select Time") {
+    timeSelect.innerHTML = `<option value="">${msg}</option>`;
+  }
+
+  resetTimes();
+
+  async function updateAvailableTimes() {
+    hideError();
+    resetTimes("Loading...");
+
+    const date = dateInput.value;
+    const service = serviceSelect.value;
+
+    if (!service) return resetTimes("Select service first");
+    if (!date) return resetTimes("Select date first");
 
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/availability?date=${date}`
-      );
+      const url = `${API_BASE}/api/availability?date=${encodeURIComponent(
+        date
+      )}&service=${encodeURIComponent(service)}`;
 
-      const data = await response.json();
+      const res = await fetch(url);
 
-      if (!data.availableSlots || data.availableSlots.length === 0) {
-        timeSelect.innerHTML += `<option disabled>No slots available</option>`;
+      if (!res.ok) {
+        resetTimes("No slots");
+        showError(`Availability error (${res.status}). Is the server running on :3000?`);
         return;
       }
 
-      data.availableSlots.forEach(time => {
-        timeSelect.innerHTML += `<option value="${time}">${time}</option>`;
-      });
+      const data = await res.json();
+      const slots = Array.isArray(data.availableSlots) ? data.availableSlots : [];
 
-    } catch (error) {
-      console.error(error);
-      timeSelect.innerHTML += `<option disabled>Error loading times</option>`;
+      resetTimes("Select Time");
+
+      if (!slots.length) {
+        timeSelect.innerHTML += `<option disabled>No slots available</option>`;
+        showError("No slots: try another date (within 30 days) or not Sunday.");
+        return;
+      }
+
+      slots.forEach((t) => {
+        timeSelect.innerHTML += `<option value="${t}">${t}</option>`;
+      });
+    } catch (err) {
+      console.error(err);
+      resetTimes("No slots");
+      showError("Could not reach the server. Start it: node server.js (port 3000).");
     }
   }
 
-  dateInput.addEventListener("change", () => {
-    updateAvailableTimes(dateInput.value);
-  });
+  // 🔥 When service/date changes, reload times
+  dateInput.addEventListener("change", updateAvailableTimes);
+  serviceSelect.addEventListener("change", updateAvailableTimes);
 
-  /* =======================
-     IMAGE SKELETON LOADER
-  ======================= */
-document.querySelectorAll(".image-wrapper img").forEach(img => {
-  const wrapper = img.parentElement;
+  // 🔥 If both already filled (browser autofill), load times once
+  if (dateInput.value && serviceSelect.value) {
+    updateAvailableTimes();
+  }
 
-  // Safety timeout (2.5s max skeleton)
-  const timeout = setTimeout(() => {
-    wrapper.classList.add("loaded");
-    img.style.display = "block";
-    img.style.opacity = "1";
-  }, 2500);
+  // =========================
+  // SUBMIT BOOKING
+  // =========================
+  if (form && errorBox && successBox) {
+    const submitBtn = form.querySelector("button");
 
-  img.addEventListener("load", () => {
-    clearTimeout(timeout);
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideError();
+      successBox.classList.add("hidden");
 
-    setTimeout(() => {
-      img.style.display = "block";
-      img.style.opacity = "1";
-      wrapper.classList.add("loaded");
-    }, 300); // small delay = smoother UX
-  });
+      const bookingData = {
+        name: document.getElementById("name")?.value.trim() || "",
+        phone: document.getElementById("phone")?.value.trim() || "",
+        service: serviceSelect.value,
+        date: dateInput.value,
+        time: timeSelect.value,
+      };
 
-  img.addEventListener("error", () => {
-    clearTimeout(timeout);
-    wrapper.classList.add("loaded"); // remove skeleton even if image fails
-  });
-});
+      if (!bookingData.service || !bookingData.date || !bookingData.time) {
+        showError("Please select service, date and time.");
+        return;
+      }
 
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Booking...";
+      }
 
-  /* =======================
-     SERVICE CARD CLICK
-  ======================= */
-  document.querySelectorAll(".preview-card").forEach(card => {
-    card.addEventListener("click", () => {
-      const service = card.dataset.service;
-      const select = document.getElementById("service");
+      try {
+        const response = await fetch(`${API_BASE}/api/bookings`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bookingData),
+        });
 
-      select.value = service;
-      select.classList.add("highlight");
-      setTimeout(() => select.classList.remove("highlight"), 1200);
+        const result = await response.json().catch(() => ({}));
 
-      scrollToBooking();
-    });
-  });
-
-  /* =======================
-     FORM SUBMIT
-  ======================= */
-  const form = document.getElementById("bookingForm");
-  const submitBtn = form.querySelector("button");
-  const successBox = document.getElementById("bookingSuccess");
-  const errorBox = document.getElementById("bookingError");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    // Reset UI
-    errorBox.classList.add("hidden");
-    successBox.classList.add("hidden");
-
-    const bookingData = {
-      name: document.getElementById("name").value.trim(),
-      phone: document.getElementById("phone").value.trim(),
-      service: document.getElementById("service").value,
-      date: document.getElementById("date").value,
-      time: document.getElementById("time").value,
-    };
-
-    if (!bookingData.date || !bookingData.time) {
-      errorBox.textContent = "Please select a valid date and time.";
-      errorBox.classList.remove("hidden");
-      return;
-    }
-
-    /* 🔒 DISABLE BUTTON (HERE IS THE ANSWER) */
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Booking...";
-
-    try {
-      const response = await fetch("http://localhost:3000/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookingData),
-      });
-
-      const result = await response.json();
-
-      /* ❌ ERROR FROM SERVER */
-      if (!response.ok) {
-        errorBox.innerHTML = `<strong>${result.message}</strong>`;
-        errorBox.classList.remove("hidden");
-
-        // Suggestions UI
-        if (result.suggestions) {
-          errorBox.innerHTML += `
-            <div class="time-suggestions">
-              ${result.suggestions.map(t => `<button>${t}</button>`).join("")}
-            </div>
-          `;
-
-          document.querySelectorAll(".time-suggestions button").forEach(btn => {
-            btn.addEventListener("click", () => {
-              timeSelect.value = btn.textContent;
-              errorBox.classList.add("hidden");
-            });
-          });
+        if (!response.ok) {
+          showError(result.message || "Booking failed.");
+          // if server gives suggestions, refresh times
+          if (result.suggestions?.length) updateAvailableTimes();
+          return;
         }
 
-        return;
-      }
+        successBox.classList.remove("hidden");
 
-      /* ✅ SUCCESS */
-      successBox.classList.remove("hidden");
-
-      const whatsappMessage = encodeURIComponent(
-        `Hello Magical Touch ✂️
+        // WhatsApp send (this does NOT affect booking)
+        const whatsappMessage = encodeURIComponent(
+          `Hello Magical Touch ✂️
+NEW BOOKING REQUEST (Pending)
 Name: ${bookingData.name}
 Phone: ${bookingData.phone}
 Service: ${bookingData.service}
 Date: ${bookingData.date}
 Time: ${bookingData.time}`
-      );
-
-      setTimeout(() => {
-        window.open(
-          `https://wa.me/27750871734?text=${whatsappMessage}`,
-          "_blank"
         );
-      }, 1200);
 
-      form.reset();
-      resetTimeSelect();
+        setTimeout(() => {
+          window.open(`https://wa.me/27750871734?text=${whatsappMessage}`, "_blank");
+        }, 900);
 
-    } catch (error) {
-      console.error(error);
-      errorBox.textContent = "Server error. Please try again.";
-      errorBox.classList.remove("hidden");
-    } finally {
-      /* 🔓 RE-ENABLE BUTTON (ALWAYS) */
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Confirm Booking";
-    }
+        form.reset();
+        resetTimes();
+      } catch (err) {
+        console.error(err);
+        showError("Server error. Please try again.");
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Confirm Booking";
+        }
+      }
+    });
+  }
+
+  // =========================
+  // NAV (toggle + close outside + escape)
+  // =========================
+  const navToggle = document.getElementById("navToggle");
+  const mainNav = document.getElementById("mainNav");
+  if (!navToggle || !mainNav) return;
+
+  const closeMenu = () => {
+    mainNav.classList.remove("active");
+    navToggle.setAttribute("aria-expanded", "false");
+  };
+
+  const toggleMenu = () => {
+    mainNav.classList.toggle("active");
+    navToggle.setAttribute("aria-expanded", mainNav.classList.contains("active"));
+  };
+
+  navToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMenu();
   });
 
+  mainNav.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!mainNav.classList.contains("active")) return;
+    if (!navToggle.contains(e.target) && !mainNav.contains(e.target)) closeMenu();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu();
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) closeMenu();
+  });
 });

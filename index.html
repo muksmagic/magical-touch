@@ -2,192 +2,254 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Magical Touch Barbershop</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Ibbie the barber</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+    <header class="topbar">
+        <a class="brand" href="#home" aria-label="Go to home">
+            <span class="brand__title">Ibbie</span>
+            <span class="brand__sub">the barber</span>
+        </a>
 
-    <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/27750871734?text=Hello%20I%20would%20like%20to%20book%20an%20appointment"
-        class="whatsapp-btn" target="_blank">
-        Book on WhatsApp
-    </a>
+        <button class="navToggle" id="navToggle" type="button" aria-label="Menu" aria-controls="mainNav"
+            aria-expanded="false">
+            ☰
+        </button>
 
-
-
-    <header>
-        <h1>MAGICAL TOUCH</h1>
-        <nav>
-            <a href="#home">Home</a>
+        <nav class="nav" id="mainNav">
+            <a href="#about">About</a>
+            <a href="#team">Team</a>
+            <a href="#prices">Prices</a>
+            <a href="#gallery">Gallery</a>
             <a href="#booking">Booking</a>
             <a href="#location">Location</a>
+            <a class="nav__admin" href="/admin.html">Admin</a>
         </nav>
     </header>
 
-    <section id="home" class="hero">
-        <h2>Street Cuts. Clean Fades.</h2>
-        <p>Where the streets meet precision</p>
-        <button onclick="scrollToBooking()">Book Now</button>
-    </section>
+    <main id="home" class="page">
+        <section class="hero">
+            <div class="hero__inner">
+                <h1 class="hero__headline">
+                    <span class="hero__headlineTop">Ibbie</span>
+                    <span class="hero__headlineBottom">the barber</span>
+                </h1>
 
-    <!-- Trust Statement -->
-    <section class="trust-line">
-        <p>
-            “I don’t just cut hair. I run a professional service you can trust.
-            Walk in confident. Walk out sharper.”
-        </p>
-    </section>
-
-    <!-- Why Choose Us -->
-    <section class="section dark">
-        <h2>Why Choose Us</h2>
-        <div class="section-divider"></div>
-
-        <div class="why-us">
-            <div>Precision fades & clean cuts</div>
-            <div>On-time appointments</div>
-            <div>Professional barbers</div>
-            <div>Easy to find location</div>
-            <div>Fast WhatsApp booking</div>
-        </div>
-    </section>
-
-    <!-- Services Preview -->
-    <section class="section">
-        <h2>Popular Services</h2>
-
-        <div class="services-preview">
-
-            <div class="card preview-card" data-service="Haircut">
-                <div class="image-wrapper">
-                    <img src="images/haircut.jpg.jpg" alt="Haircut" loading="lazy">
-                </div>
-
-                <!-- NEW -->
-                <div class="card-overlay">
-                    Book this service
-                </div>
-
-                <h3>Haircut</h3>
-                <span>$10</span>
+                <button class="hero__cta" type="button" onclick="scrollToBooking()">
+                    Book online
+                </button>
             </div>
 
-            <div class="card preview-card" data-service="Fade">
-                <div class="image-wrapper">
-                    <img src="images/fade-2.webp.webp" alt="Fade haircut" loading="lazy">
-                </div>
+            <div class="hero__sideLabel">IBBIE THE BARBER</div>
+        </section>
 
-                <div class="card-overlay">
-                    Book this service
-                </div>
-
-                <h3>Fade</h3>
-                <span>$12</span>
+        <section id="about" class="section section--split">
+            <div class="section__left">
+                <h2 class="section__title">About</h2>
+                <p class="section__text">
+                    Ibbie the barber is a premium cut experience built on discipline,
+                    hygiene, and consistency. We don’t rush. We don’t overbook. We
+                    deliver clean work every time.
+                </p>
+                <p class="section__text section__text--muted">
+                    Tip: replace this with your real story.
+                </p>
             </div>
 
-            <div class="card preview-card" data-service="Full Package">
-                <div class="image-wrapper">
-                    <img src="images/full-package.jpg.jpg" alt="Full package" loading="lazy">
+            <div class="section__right">
+                <div class="mediaFrame">
+                    <img src="images/shop-1.jpg" alt="Barbershop interior" loading="lazy" />
                 </div>
-
-                <div class="card-overlay">
-                    Book this service
-                </div>
-
-                <h3>Full Package</h3>
-                <span>$15</span>
             </div>
 
-        </div>
-    </section>
+            <div class="section__index">/01</div>
+        </section>
 
+        <section id="team" class="section">
+            <h2 class="section__title">Our Team</h2>
 
-    <!-- Testimonials -->
-    <section class="section dark">
-        <h2>What Our Clients Say</h2>
+            <div class="teamGrid">
+                <article class="personCard">
+                    <img src="images/barber-1.jpg" alt="Barber portrait" loading="lazy" />
+                    <div class="personCard__meta">
+                        <div class="personCard__name">Ibbie</div>
+                        <div class="personCard__role">Top Barber</div>
+                    </div>
+                </article>
 
-        <div class="testimonials">
-            <blockquote>
-                “Best fade in town. Clean, professional, and always on time.”
-                <span>— Alex M.</span>
-            </blockquote>
+                <article class="personCard">
+                    <img src="images/barber-2.jpg" alt="Barber portrait" loading="lazy" />
+                    <div class="personCard__meta">
+                        <div class="personCard__name">Barber</div>
+                        <div class="personCard__role">Stylist</div>
+                    </div>
+                </article>
 
-            <blockquote>
-                “I book once and never worry. Quality every time.”
-                <span>— Junior K.</span>
-            </blockquote>
-        </div>
-    </section>
-
-    <!-- Final Booking CTA -->
-    <section class="final-cta">
-        <h2>Ready for a clean cut?</h2>
-        <p>Book your appointment in under 30 seconds.</p>
-        <a href="#booking" class="cta-btn">Book Now</a>
-    </section>
-
-
-    <section id="booking" class="section">
-        <h2>Online Booking</h2>
-
-        <div class="booking-card">
-            <form id="bookingForm">
-
-                <input type="text" id="name" placeholder="Your Name" required>
-
-                <input type="tel" id="phone" placeholder="Phone Number (WhatsApp)" required>
-
-                <select id="service" required>
-                    <option value="">Select Service</option>
-                    <option>Haircut</option>
-                    <option>Fade</option>
-                    <option>Beard</option>
-                    <option>Full Package</option>
-                </select>
-
-                <input type="date" id="date" required>
-
-                <select id="time" required>
-                    <option value="">Select Time</option>
-                </select>
-
-                <button type="submit">Confirm Booking</button>
-
-            </form>
-
-            <div id="bookingError" class="booking-error hidden"></div>
-
-            <!-- SUCCESS MESSAGE -->
-            <div id="bookingSuccess" class="booking-success hidden">
-                <div class="checkmark">✔</div>
-                <h3>Booking Confirmed!</h3>
-                <p>We’ll confirm your appointment shortly on WhatsApp.</p>
+                <article class="personCard">
+                    <img src="images/barber-3.jpg" alt="Barber portrait" loading="lazy" />
+                    <div class="personCard__meta">
+                        <div class="personCard__name">Barber</div>
+                        <div class="personCard__role">Stylist</div>
+                    </div>
+                </article>
             </div>
 
-            <p class="note">
-                Booking confirmation will be sent via WhatsApp
-            </p>
-        </div>
-    </section>
+            <div class="section__index">/02</div>
+        </section>
 
+        <section id="prices" class="section">
+            <h2 class="section__title">Prices</h2>
 
+            <div class="priceGrid">
+                <div class="priceCol">
+                    <h3>Hair</h3>
+                    <ul>
+                        <li><span>Haircut</span><span>$10</span></li>
+                        <li><span>Low Taper</span><span>$12</span></li>
+                        <li><span>Skin Fade</span><span>$12</span></li>
+                    </ul>
+                </div>
 
-    <section id="location" class="section dark">
-        <h2>Find Us</h2>
-        <p>📍 Magical Touch Barbershop – Your City</p>
+                <div class="priceCol">
+                    <h3>Beard</h3>
+                    <ul>
+                        <li><span>Beard Trim</span><span>$8</span></li>
+                        <li><span>Hot Towel</span><span>$10</span></li>
+                    </ul>
+                </div>
 
-        <iframe src="https://www.google.com/maps?q=Kinshasa&output=embed" allowfullscreen loading="lazy">
-        </iframe>
-    </section>
+                <div class="priceCol">
+                    <h3>Packages</h3>
+                    <ul>
+                        <li><span>Full Package</span><span>$15</span></li>
+                        <li><span>Hair + Beard</span><span>$16</span></li>
+                    </ul>
+                </div>
+            </div>
 
-    <footer>
-        <p>© 2026 Magical Touch Barbershop</p>
-    </footer>
+            <div class="section__index">/03</div>
+        </section>
 
-    <script src="script.js"></script>
+        <section id="gallery" class="section">
+            <h2 class="section__title">Our Work</h2>
+
+            <div class="galleryRow" aria-label="Gallery slider">
+                <button class="galleryArrow" type="button" aria-label="Scroll left"
+                    onclick="scrollGallery(-1)">‹</button>
+
+                <div class="galleryTrack" id="galleryTrack">
+                    <figure class="galleryItem">
+                        <img src="images/work-1.jpg" alt="Haircut example" loading="lazy" />
+                        <figcaption>Clean fade</figcaption>
+                    </figure>
+                    <figure class="galleryItem">
+                        <img src="images/work-2.jpg" alt="Haircut example" loading="lazy" />
+                        <figcaption>Beard & shape</figcaption>
+                    </figure>
+                    <figure class="galleryItem">
+                        <img src="images/work-3.jpg" alt="Haircut example" loading="lazy" />
+                        <figcaption>Low taper</figcaption>
+                    </figure>
+                    <figure class="galleryItem">
+                        <img src="images/work-4.jpg" alt="Haircut example" loading="lazy" />
+                        <figcaption>Texture cut</figcaption>
+                    </figure>
+                </div>
+
+                <button class="galleryArrow" type="button" aria-label="Scroll right"
+                    onclick="scrollGallery(1)">›</button>
+            </div>
+
+            <div class="section__index">/04</div>
+        </section>
+
+        <section id="booking" class="section section--booking">
+            <h2 class="section__title">Booking</h2>
+
+            <div class="bookingLayout">
+                <div class="bookingInfo">
+                    <h3>How booking works</h3>
+                    <ol>
+                        <li>Select service + date</li>
+                        <li>Pick a time slot</li>
+                        <li>Submit request (Pending)</li>
+                        <li>Barber confirms → WhatsApp</li>
+                    </ol>
+
+                    <div class="peakBox">
+                        <h4>Peak hours</h4>
+                        <p>These times fill fast:</p>
+                        <div class="chips">
+                            <span class="chip">12:00–14:00</span>
+                            <span class="chip">16:00–18:00</span>
+                            <span class="chip">Saturday</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bookingCard">
+                    <form id="bookingForm">
+                        <input type="text" id="name" placeholder="Your Name" required />
+                        <input type="tel" id="phone" placeholder="Phone Number (WhatsApp)" required />
+
+                        <select id="service" required>
+                            <option value="">Select Service</option>
+                            <option>Haircut</option>
+                            <option>Fade</option>
+                            <option>Beard</option>
+                            <option>Full Package</option>
+                        </select>
+
+                        <input type="date" id="date" required />
+
+                        <select id="time" required>
+                            <option value="">Select Time</option>
+                        </select>
+
+                        <button type="submit">Confirm Booking</button>
+                    </form>
+
+                    <div id="bookingError" class="booking-error hidden"></div>
+
+                    <div id="bookingSuccess" class="booking-success hidden">
+                        <div class="checkmark">✔</div>
+                        <h3>Booking Submitted!</h3>
+                        <p>We’ll confirm on WhatsApp shortly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section__index">/05</div>
+        </section>
+
+        <section id="location" class="section">
+            <h2 class="section__title">Location</h2>
+            <p class="section__text">Tap the map to open directions.</p>
+
+            <a class="map-click" href="https://www.google.com/maps/dir/?api=1&destination=Kinshasa" target="_blank"
+                rel="noopener">
+                <iframe src="https://www.google.com/maps?q=Kinshasa&output=embed" loading="lazy"
+                    title="Map location"></iframe>
+                <span class="map-overlay">Tap for directions</span>
+            </a>
+        </section>
+
+        <footer class="footer">© 2026 Ibbie the barber</footer>
+    </main>
+
+    <!-- IMPORTANT: only link the file -->
+    <script src="./script.js"></script>
 </body>
 
 </html>
